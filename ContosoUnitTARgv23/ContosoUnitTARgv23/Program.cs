@@ -1,3 +1,7 @@
+using ContosoUnitTARgv23.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+
 namespace ContosoUnitTARgv23
 {
     public class Program
@@ -5,6 +9,12 @@ namespace ContosoUnitTARgv23
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<SchoolContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -30,6 +40,7 @@ namespace ContosoUnitTARgv23
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+           
             app.Run();
         }
     }
