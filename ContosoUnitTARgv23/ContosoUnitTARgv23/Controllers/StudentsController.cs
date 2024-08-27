@@ -1,5 +1,6 @@
 ﻿using ContosoUnitTARgv23.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUnitTARgv23.Controllers
@@ -44,5 +45,28 @@ namespace ContosoUnitTARgv23.Controllers
             return View(student);
 
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Student student)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _context.Add(student);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                ModelState.AddModelError("", "unable to save changes" + "Try again, and if the problems persists " +
+                "contact your system administrator");
+            }
+            return View(student);
+        }
+
     }
 }
