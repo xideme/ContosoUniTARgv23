@@ -47,18 +47,23 @@ namespace ContosoUniTARgv23.Controllers
             return View(student);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Student student)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    _context.Add(student);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
+                //if (ModelState.IsValid)
+                //{
+                _context.Add(student);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+                //}
             }
             catch (Exception ex)
             {
@@ -77,6 +82,7 @@ namespace ContosoUniTARgv23.Controllers
             {
                 return NotFound();
             }
+
             var student = await _context.Students.FindAsync(id);
             if (student == null)
             {
@@ -87,30 +93,76 @@ namespace ContosoUniTARgv23.Controllers
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost (int? id)
+        public async Task<IActionResult> Edit(Student student)
+        {
+            if (student.Id != student.Id)
+            {
+                return NotFound();
+            }
+            //if (ModelState.IsValid)
+            //{
+            try
+            {
+                _context.Update(student);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.)
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator.");
+            }
+            //}
+            return View(student);
+        }
+
+        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
             {
                 return NotFound();
-
             }
-            var studentToUpdate = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
-            if (await TryUpdateModelAsync<Student>(studentToUpdate, "", s => s.FirstMidName, s => s.LastName, s => s.EnrollmentDate)) ;
+
+            var student = await _context.Students
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (student == null)
             {
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateException ex)
-                {
-
-                    ModelState.AddModelError("", "Unable to Save changes" + "Try again" + "see your system administrator");
-                }
-
+                return NotFound();
             }
 
-            return View(studentToUpdate);
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewData["ErrorMessage"] =
+                    "Delete failed. Try again, and if the problem presists " +
+                    "see your system administrator.";
+            }
+
+            return View(student);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmation(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+            if (student == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Students.Remove(student);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
+            }
         }
     }
 }
