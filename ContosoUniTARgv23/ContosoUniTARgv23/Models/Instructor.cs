@@ -10,14 +10,12 @@ namespace ContosoUniTARgv23.Models
         [Required]
         [Display(Name = "Last Name")]
         [StringLength(50)]
-
         public string LastName { get; set; }
 
         [Required]
         [Column("FirstName")]
         [Display(Name = "First Name")]
         [StringLength(50)]
-
         public string FirstMidName { get; set; }
 
         [DataType(DataType.Date)]
@@ -28,11 +26,10 @@ namespace ContosoUniTARgv23.Models
         [Display(Name = "Full Name")]
         public string FullName
         {
-
             get { return LastName + ", " + FirstMidName; }
         }
 
-        public ICollection<CourseAssignment> courseAssignments { get; set; }
+        public ICollection<CourseAssignment> CourseAssignments { get; set; }
         public OfficeAssignment OfficeAssignment { get; set; }
     }
 }

@@ -12,11 +12,9 @@ namespace ContosoUniTARgv23.Data
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Student> Students { get; set; }
-
-        public DbSet<Instructor>Instructors { get; set; }
-
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
         public DbSet<OfficeAssignment> OfficeAssignments { get; set; }
-
         public DbSet<CourseAssignment> CourseAssignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,10 +24,11 @@ namespace ContosoUniTARgv23.Data
             modelBuilder.Entity<Student>().ToTable("Student");
             modelBuilder.Entity<Department>().ToTable("Department");
             modelBuilder.Entity<Instructor>().ToTable("Instructor");
-            modelBuilder.Entity<OfficeAssignment>().ToTable("OfficeAssignments");
-            modelBuilder.Entity<CourseAssignment>().ToTable("CourseAssignments");
+            modelBuilder.Entity<OfficeAssignment>().ToTable("OfficeAssignment");
+            modelBuilder.Entity<CourseAssignment>().ToTable("CourseAssignment");
 
-            modelBuilder.Entity<CourseAssignment>().HasKey(c => new { c.CourseId, c.InstructorId });
+            modelBuilder.Entity<CourseAssignment>()
+                .HasKey(c => new { c.CourseId, c.InstructorId });
         }
     }
 }
