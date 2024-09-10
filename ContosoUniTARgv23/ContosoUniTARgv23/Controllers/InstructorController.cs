@@ -7,31 +7,29 @@ namespace ContosoUniTARgv23.Controllers
 {
     public class InstructorController : Controller
     {
-
         private readonly SchoolContext _context;
 
         public InstructorController
             (
-                SchoolContext context
+            SchoolContext context
             )
         {
             _context = context;
-
         }
+
         public async Task<IActionResult> Index(int? id, int? courseId)
         {
-
             var viewModel = new InstructorIndexData();
-
-            viewModel.Instructor = await _context.Instructors
+            
+            viewModel.Instructors = await _context.Instructors
                 .Include(i => i.OfficeAssignment)
                 .Include(i => i.CourseAssignments)
-                .ThenInclude(i => i.Course)
-                .ThenInclude(i => i.Enrollments)
-                .ThenInclude(i => i.Student)
+                    .ThenInclude(i => i.Course)
+                        .ThenInclude(i => i.Enrollments)
+                            .ThenInclude(i => i.Student)
                 .Include(i => i.CourseAssignments)
-                .ThenInclude(i => i.Course)
-                .ThenInclude(i => i.Department)
+                    .ThenInclude(i => i.Course)
+                        .ThenInclude(i => i.Department)
                 .AsNoTracking()
                 .OrderBy(i => i.LastName)
                 .ToListAsync();
@@ -64,7 +62,6 @@ namespace ContosoUniTARgv23.Controllers
                     .Single()
                     .Enrollments;
             }
-
 
             return View(viewModel);
         }

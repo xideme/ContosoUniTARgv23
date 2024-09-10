@@ -4,21 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniTARgv23.Controllers
 {
-    public class CourseController : Controller
+    public class CoursesController : Controller
     {
         private readonly SchoolContext _context;
 
-        public CourseController
+        public CoursesController
             (
             SchoolContext context
             )
         {
-            _context = context;
+                _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
-
             var courses = await _context.Courses
                 .Include(c => c.Department)
                 .AsNoTracking()
@@ -26,7 +25,5 @@ namespace ContosoUniTARgv23.Controllers
 
             return View(courses);
         }
-
-
     }
 }
