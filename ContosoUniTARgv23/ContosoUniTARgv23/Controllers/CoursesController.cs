@@ -3,8 +3,6 @@ using ContosoUniTARgv23.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using Microsoft.VisualBasic;
 
 namespace ContosoUniTARgv23.Controllers
 {
@@ -94,9 +92,10 @@ namespace ContosoUniTARgv23.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
-            //if (await TryUpdateModelAsync<Course>(courseToUpdate,
+            //if (await TryUpdateModelAsync<Course>(
+            //    courseToUpdate,
             //    "",
-            //   c => c.Credits, c => c.DepartmentId, c => c.Title))
+            //    c => c.Credits, c => c.DepartmentId, c => c.Title))
             //{
             //    try
             //    {
@@ -115,47 +114,44 @@ namespace ContosoUniTARgv23.Controllers
             //return View(courseToUpdate);
         }
 
-
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Courses == null)
             {
-
                 return NotFound();
             }
 
             var course = await _context.Courses
-               .Include(c => c.Department)
-               .AsNoTracking()
-               .FirstOrDefaultAsync(m => m.CourseId == id);
+                .Include(c => c.Department)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.CourseId == id);
 
-            if (course == null) {
+            if (course == null)
+            {
                 return NotFound();
             }
 
             return View(course);
         }
 
-            [HttpPost, ActionName("Delete")]
-            [ValidateAntiForgeryToken]
-
-            public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Courses == null)
             {
-                if (_context.Courses == null)
-                {
-                    return Problem("Entity set 'SchoolContext.Courses' is null");
-                }
+                return Problem("Entity set 'SchoolContext.Courses' is null.");
+            }
 
-                var course = await _context.Courses.FindAsync(id);
-                if (course == null) {
-                    _context.Courses.Remove(course);
-                }
-
-
+            var course = await _context.Courses.FindAsync(id);
+            if (course != null)
+            {
+                _context.Courses.Remove(course);
+            }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-            }
+        }
 
         public IActionResult Create()
         {
@@ -165,8 +161,7 @@ namespace ContosoUniTARgv23.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Create([Bind("CourseId, Credits, DepartmentId, Title")] Course course)
+        public async Task<IActionResult> Create([Bind("CourseId,Credits,DepartmentId,Title")] Course course)
         {
             if (ModelState.IsValid)
             {
@@ -176,8 +171,8 @@ namespace ContosoUniTARgv23.Controllers
             }
 
             PopulateDepartmentDropDownList(course.DepartmentId);
+            return View(course);
         }
-
 
         private void PopulateDepartmentDropDownList(object selectedDepartment = null)
         {
